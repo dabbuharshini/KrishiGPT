@@ -1,4 +1,4 @@
-# KrishiGPT API Webapp (Updated)
+# KrishiGPT API Webapp
 
 - Auto-detects location (browser geolocation with IP fallback)
 - Fetches current weather from OpenWeather (set `OPENWEATHER_API_KEY` in `.env`)

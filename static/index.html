@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KrishiGPT — AI Farming Assistant</title>
+  
+  <link rel="stylesheet" href="/static/styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+</head>
+<body>
+  <div id="pageProgress" class="progress" style="width:0;"></div>
+  <header>
+    <div class="brand">🌾 KrishiGPT</div>
+    <div class="tagline">Local weather–aware guidance</div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2 class="section-title"> Ask KrishiGPT</h2>
+      <div class="grid">
+        <div class="field">
+          <label data-i18n="label_crop">Crop</label>
+          <input id="crop" type="text" placeholder="e.g., wheat, rice" autocomplete="off" list="crops"/>
+          <datalist id="crops">
+            <option value="wheat"></option>
+            <option value="rice"></option>
+            <option value="maize"></option>
+            <option value="sugarcane"></option>
+            <option value="cotton"></option>
+            <option value="soybean"></option>
+            <option value="mustard"></option>
+            <option value="millet"></option>
+            <option value="barley"></option>
+            <option value="pulses"></option>
+          </datalist>
+        </div>
+        <div class="field">
+          <label data-i18n="label_location">Location (lat,lon)</label>
+          <div class="inline-row">
+            <input id="loc" type="text" placeholder="auto-detected" autocomplete="off" />
+            <button id="geoBtn" type="button" class="secondary" data-i18n="btn_use_location">📍 Use my location</button>
+            <small id="geoStatus" class="muted">Detecting location…</small>
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="label_language">Language</label>
+          <select id="lang">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="gu">ગુજરાતી (Gujarati)</option>
+            <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+            <option value="ur">اردو (Urdu)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label data-i18n="label_question">Your question</label>
+        <textarea id="question" rows="3" placeholder="e.g., quantity of fertilizer for crop" data-i18n-placeholder="ph_question"></textarea>
+        <small id="langHint" class="muted" data-i18n="hint_language_input">Type your question in the selected language.</small>
+        <div id="quickChips" class="chips">
+          <button type="button" class="chip" data-q="Fertilizer recommendation for my crop" data-i18n="chip_fertilizer" data-i18n-q="q_fertilizer">Fertilizer</button>
+          <button type="button" class="chip" data-q="Irrigation advice for today" data-i18n="chip_irrigation" data-i18n-q="q_irrigation">Irrigation</button>
+          <button type="button" class="chip" data-q="Common pests and management" data-i18n="chip_pests" data-i18n-q="q_pests">Pests</button>
+          <button type="button" class="chip" data-q="Sowing window and spacing" data-i18n="chip_sowing" data-i18n-q="q_sowing">Sowing</button>
+        </div>
+      </div>
+
+      <div class="actions-row inline-actions">
+        <button id="askBtn" data-i18n="btn_ask">➤ Ask KrishiGPT</button>
+        <div class="actions-row">
+          <button id="micBtn" type="button" class="mic-button" aria-label="Voice input">
+            <svg class="mic-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+          </button>
+        </div>
+        <button id="clearBtn" type="button" class="secondary" data-i18n="btn_clear">🧹 Clear</button>
+        <button id="sampleBtn" type="button" class="secondary" data-i18n="btn_sample">✨ Sample</button>
+        <span id="loading" class="muted" style="display:none;">⏳ Processing…</span>
+      </div>
+      <div id="validation" class="error" role="alert" style="display:none;"></div>
+    </section>
+
+    
+
+    <section class="card">
+      <h2 class="section-title"> Results <button id="volumeBtn" type="button" class="secondary" aria-label="Read / Stop">🔊</button><button id="speedBtn" type="button" class="secondary" aria-label="Playback speed">1x</button></h2>
+      <div class="results-grid">
+        <div class="card-sm">
+          <div class="card-head">
+            <span data-i18n="label_plan">Plan</span>
+          </div>
+          <ol id="planList" aria-live="polite" class="plan-list"></ol>
+        </div>
+        <div class="card-sm">
+          <div class="card-head">
+            <span data-i18n="label_fertilizer">Fertilizer</span>
+          </div>
+          <div id="fert" class="info" aria-live="polite"></div>
+        </div>
+        <div class="card-sm">
+          <div class="card-head">
+            <span data-i18n="label_analysis">Analysis</span>
+          </div>
+          <div id="answer" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" style="display:none;"></div>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
